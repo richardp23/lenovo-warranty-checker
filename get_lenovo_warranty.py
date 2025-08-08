@@ -21,7 +21,7 @@ def get_warranty_info(serial_number):
     }
 
     try:
-        response = requests.post(url, headers=headers, json=data)
+        response = requests.post(url, headers=headers, json=data, timeout=10)
         response.raise_for_status()
         result = response.json()
 
@@ -39,8 +39,7 @@ def get_warranty_info(serial_number):
                 'Months Remaining': current_warranty.get('remainingMonths', 'Unknown')
             }
         else:
-            print(f"Error in warranty response for {serial_number}: {
-                  result.get('msg', {}).get('desc', 'Unknown error')}")
+            print(f"Error in warranty response for {serial_number}: {result.get('msg', {}).get('desc', 'Unknown error')}")
             return create_error_entry(serial_number)
 
     except Exception as e:
@@ -72,7 +71,7 @@ def main():
         print(f"Processing serial number: {serial}")
         warranty_info = get_warranty_info(serial)
         results.append(warranty_info)
-        time.sleep(1)
+        time.sleep(5)
 
     results_df = pd.DataFrame(results)
     results_df.to_csv(output_file, index=False)
